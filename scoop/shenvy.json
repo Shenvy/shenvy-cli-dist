@@ -1,22 +1,22 @@
 {
-    "version": "0.1.8",
+    "version": "0.1.9",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.8/shenvy_windows_amd64.zip",
+            "url": "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.9/shenvy_windows_amd64.zip",
             "bin": [
                 "shenvy.exe"
             ],
-            "hash": "7b2ff88ba99e087343a9fc171057a4b11cbbb7bddfa9fdaf62558c1948957db3"
+            "hash": "0596506cf15396ef387e366dbbf7ca50ee23b3b3143d0b9f713094c59fee5685"
         },
         "arm64": {
-            "url": "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.8/shenvy_windows_arm64.zip",
+            "url": "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.9/shenvy_windows_arm64.zip",
             "bin": [
                 "shenvy.exe"
             ],
-            "hash": "9f829c5c8d8b7f1e42d1c7a71d21f465ab14da954ad4fa19e44ac0ebfd873944"
+            "hash": "6171673cd606c4e744b3470af72a290d45578c5ba462a2240b252d5ce428e7e6"
         }
     },
-    "homepage": "https://shenvy.dev",
+    "homepage": "https://shenvy.net",
     "license": "MIT",
     "description": "Securely manage environment variables with E2EE."
 }
