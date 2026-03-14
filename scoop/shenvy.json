@@ -1,19 +1,19 @@
 {
-    "version": "0.1.4",
+    "version": "0.1.5",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.4/shenvy_windows_amd64.zip",
+            "url": "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.5/shenvy_windows_amd64.zip",
             "bin": [
                 "shenvy.exe"
             ],
-            "hash": "708f718abc4360f4b5bfd92b88baa88160d11b140674e1fc8877068492e6bdb7"
+            "hash": "19376e027a5ac7ea67f7ebfbd77b6835c91d03586b39cf868dde1da8e6fd6683"
         },
         "arm64": {
-            "url": "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.4/shenvy_windows_arm64.zip",
+            "url": "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.5/shenvy_windows_arm64.zip",
             "bin": [
                 "shenvy.exe"
             ],
-            "hash": "4075103c40e7fc8876dcf579e71675b1cc2cca076b63dc0a29dd4ff40be6fd81"
+            "hash": "b9e78019c4fd541db1f13b41e30250d144ca82496295059324d2093d4a1a3215"
         }
     },
     "homepage": "https://shenvy.dev",
