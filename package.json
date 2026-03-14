@@ -1,0 +1,35 @@
+{
+  "name": "@shenvy/cli",
+  "version": "0.1.0",
+  "description": "Securely manage environment variables with E2EE (Go implementation wrapper)",
+  "main": "bin/install.js",
+  "bin": {
+    "shenvy": "bin/shenvy",
+    "shenvy-win": "bin/shenvy.cmd"
+  },
+  "scripts": {
+    "postinstall": "node bin/install.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shenvy/shenvy-cli-dist.git"
+  },
+  "keywords": [
+    "shenvy",
+    "cli",
+    "env",
+    "encryption",
+    "e2ee",
+    "environment",
+    "variables"
+  ],
+  "author": "Shenvy Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Shenvy/cli-dist/issues"
+  },
+  "homepage": "https://shenvy.dev",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
