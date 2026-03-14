@@ -49,13 +49,33 @@ function download(url, dest) {
         return;
       }
       response.pipe(file);
-      // Wait for 'close' instead of 'finish' to ensure OS handle is released
-      file.on('close', resolve);
+      file.on('finish', () => {
+        file.close(() => resolve());
+      });
     }).on('error', (err) => {
       fs.unlink(dest, () => {});
       reject(err);
     });
   });
+}
+
+async function extractWithRetry(retries = 5) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      console.log(`Extracting archive (attempt ${i + 1}/${retries})...`);
+      if (platform === 'win32') {
+        const psCommand = `powershell.exe -NoProfile -Command "Expand-Archive -Path '${tempArchive.replace(/'/g, "''")}' -DestinationPath '${binDir.replace(/'/g, "''")}' -Force"`;
+        execSync(psCommand, { stdio: 'inherit' });
+      } else {
+        execSync(`tar -xzf "${tempArchive}" -C "${binDir}"`, { stdio: 'inherit' });
+      }
+      return; // Success!
+    } catch (e) {
+      if (i === retries - 1) throw e;
+      console.log(`Archive locked, retrying in 1s...`);
+      await new Promise(r => setTimeout(r, 1000));
+    }
+  }
 }
 
 async function install() {
@@ -64,16 +84,10 @@ async function install() {
     
     await download(url, tempArchive);
     
-    // Small delay to let the OS settle
-    await new Promise(r => setTimeout(r, 500));
+    // Initial delay to let OS release handles
+    await new Promise(r => setTimeout(r, 1000));
 
-    console.log('Extracting archive...');
-    if (platform === 'win32') {
-      const psCommand = `powershell.exe -NoProfile -Command "Expand-Archive -Path '${tempArchive.replace(/'/g, "''")}' -DestinationPath '${binDir.replace(/'/g, "''")}' -Force"`;
-      execSync(psCommand);
-    } else {
-      execSync(`tar -xzf "${tempArchive}" -C "${binDir}"`);
-    }
+    await extractWithRetry();
     
     const extractedBinPath = path.join(binDir, finalBinName);
     if (fs.existsSync(extractedBinPath)) {
