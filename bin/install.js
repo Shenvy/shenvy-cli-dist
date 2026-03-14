@@ -41,10 +41,17 @@ function download(url, dest) {
     const file = fs.createWriteStream(dest);
     https.get(url, (response) => {
       if (response.statusCode === 302 || response.statusCode === 301) {
-        return download(response.headers.location, dest).then(resolve).catch(reject);
+        // Close the write stream BEFORE recursing — on Windows, open handles
+        // block PowerShell's Expand-Archive even after file.close() is called.
+        file.close(() => {
+          download(response.headers.location, dest).then(resolve).catch(reject);
+        });
+        return;
       }
       if (response.statusCode !== 200) {
-        reject(new Error(`Failed to download: ${response.statusCode}`));
+        file.close(() => {
+          reject(new Error(`Failed to download: ${response.statusCode}`));
+        });
         return;
       }
       response.pipe(file);
@@ -52,8 +59,10 @@ function download(url, dest) {
         file.close(() => resolve());
       });
     }).on('error', (err) => {
-      fs.unlink(dest, () => {});
-      reject(err);
+      file.close(() => {
+        fs.unlink(dest, () => {});
+        reject(err);
+      });
     });
   });
 }
@@ -63,8 +72,8 @@ const wait = (ms) => new Promise(r => setTimeout(r, ms));
 async function ensureFileReady(filePath) {
   for (let i = 0; i < 10; i++) {
     try {
-      // Try to open file for appending to check if it's locked
-      const fd = fs.openSync(filePath, 'r+');
+      // Open read-only to check if the OS has fully released the file handle
+      const fd = fs.openSync(filePath, 'r');
       fs.closeSync(fd);
       return true;
     } catch (e) {
