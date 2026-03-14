@@ -8,7 +8,8 @@ const { execSync } = require('child_process');
 
 const PROJECT_NAME = 'shenvy';
 const REPO = 'Shenvy/shenvy-cli-dist';
-const BINARY_VERSION = '0.1.0'; 
+// Dynamically use the version from package.json
+const VERSION = require('../package.json').version; 
 
 const platform = os.platform();
 const arch = os.arch();
@@ -29,13 +30,13 @@ if (!archiveName) {
   process.exit(1);
 }
 
-const url = `https://github.com/${REPO}/releases/download/v${BINARY_VERSION}/${PROJECT_NAME}_${archiveName}`;
+const url = `https://github.com/${REPO}/releases/download/v${VERSION}/${PROJECT_NAME}_${archiveName}`;
 const binDir = path.join(__dirname);
 const tempArchive = path.join(binDir, archiveName);
 const finalBinName = platform === 'win32' ? 'shenvy.exe' : 'shenvy';
 const finalBinPath = path.join(binDir, platform === 'win32' ? 'shenvy.exe' : 'shenvy-bin');
 
-console.log(`Downloading ${PROJECT_NAME} for ${target} from ${url}...`);
+console.log(`Downloading ${PROJECT_NAME} v${VERSION} for ${target} from ${url}...`);
 
 function download(url, dest) {
   return new Promise((resolve, reject) => {
@@ -66,11 +67,9 @@ download(url, tempArchive)
     
     try {
       if (platform === 'win32') {
-        // Use PowerShell for ZIP files on Windows
         const psCommand = `powershell.exe -NoProfile -Command "Expand-Archive -Path '${tempArchive}' -DestinationPath '${binDir}' -Force"`;
         execSync(psCommand);
       } else {
-        // Use tar for .tar.gz on Unix-like systems
         execSync(`tar -xzf "${tempArchive}" -C "${binDir}"`);
       }
     } catch (e) {
@@ -78,7 +77,6 @@ download(url, tempArchive)
       process.exit(1);
     }
     
-    // Rename the extracted binary to the expected name if needed (e.g., shenvy -> shenvy-bin)
     const extractedBinPath = path.join(binDir, finalBinName);
     if (fs.existsSync(extractedBinPath)) {
         if (platform !== 'win32' && extractedBinPath !== finalBinPath) {
@@ -86,19 +84,14 @@ download(url, tempArchive)
           fs.renameSync(extractedBinPath, finalBinPath);
         }
     } else {
-      console.error(`Error: Extracted binary ${finalBinName} not found in ${binDir}`);
+      console.error(`Error: Extracted binary ${finalBinName} not found`);
       process.exit(1);
     }
 
-    // Clean up the archive
-    if (fs.existsSync(tempArchive)) {
-      fs.unlinkSync(tempArchive);
-    }
-
-    if (platform !== 'win32' && fs.existsSync(finalBinPath)) {
-      fs.chmodSync(finalBinPath, 0o755);
-    }
-    console.log(`${PROJECT_NAME} installed successfully.`);
+    if (fs.existsSync(tempArchive)) fs.unlinkSync(tempArchive);
+    if (platform !== 'win32' && fs.existsSync(finalBinPath)) fs.chmodSync(finalBinPath, 0o755);
+    
+    console.log(`${PROJECT_NAME} v${VERSION} installed successfully.`);
   })
   .catch((err) => {
     console.error(`Error installing ${PROJECT_NAME}:`, err.message);
