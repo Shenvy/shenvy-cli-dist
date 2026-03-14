@@ -4,10 +4,13 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const os = require('os');
+const { execSync } = require('child_process');
 
 const PROJECT_NAME = 'shenvy';
 const REPO = 'Shenvy/shenvy-cli-dist';
-const VERSION = require('../package.json').version;
+// For the binary download, we still point to v0.1.0 since that's the latest CLI release
+// even if the NPM wrapper version bumps to 0.1.1
+const BINARY_VERSION = '0.1.0'; 
 
 const platform = os.platform();
 const arch = os.arch();
@@ -28,9 +31,11 @@ if (!archiveName) {
   process.exit(1);
 }
 
-const url = `https://github.com/${REPO}/releases/download/v${VERSION}/${PROJECT_NAME}_${archiveName}`;
+const url = `https://github.com/${REPO}/releases/download/v${BINARY_VERSION}/${PROJECT_NAME}_${archiveName}`;
 const binDir = path.join(__dirname);
-const binPath = path.join(binDir, platform === 'win32' ? 'shenvy.exe' : 'shenvy-bin');
+const tempArchive = path.join(binDir, archiveName);
+const finalBinName = platform === 'win32' ? 'shenvy.exe' : 'shenvy';
+const finalBinPath = path.join(binDir, platform === 'win32' ? 'shenvy.exe' : 'shenvy-bin');
 
 console.log(`Downloading ${PROJECT_NAME} for ${target} from ${url}...`);
 
@@ -57,13 +62,23 @@ function download(url, dest) {
   });
 }
 
-// Note: In a real production environment, we would use a library like 'tar' or 'adm-zip'
-// but to keep dependencies zero, we would ideally bundle them or use child_process for unzip/tar.
-// For this template, we assume the binary is directly downloadable or handled by a small helper.
-download(url, binPath)
+download(url, tempArchive)
   .then(() => {
+    console.log('Extracting archive...');
+    // Use native tar (available in Win10+, macOS, Linux) to extract
+    execSync(`tar -xf "${tempArchive}" -C "${binDir}"`);
+    
+    // Rename the extracted binary to the expected name if needed
+    const extractedBinPath = path.join(binDir, finalBinName);
+    if (extractedBinPath !== finalBinPath) {
+      fs.renameSync(extractedBinPath, finalBinPath);
+    }
+
+    // Clean up the archive
+    fs.unlinkSync(tempArchive);
+
     if (platform !== 'win32') {
-      fs.chmodSync(binPath, 0o755);
+      fs.chmodSync(finalBinPath, 0o755);
     }
     console.log(`${PROJECT_NAME} installed successfully.`);
   })
