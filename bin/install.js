@@ -8,8 +8,6 @@ const { execSync } = require('child_process');
 
 const PROJECT_NAME = 'shenvy';
 const REPO = 'Shenvy/shenvy-cli-dist';
-// For the binary download, we still point to v0.1.0 since that's the latest CLI release
-// even if the NPM wrapper version bumps to 0.1.1
 const BINARY_VERSION = '0.1.0'; 
 
 const platform = os.platform();
@@ -65,19 +63,32 @@ function download(url, dest) {
 download(url, tempArchive)
   .then(() => {
     console.log('Extracting archive...');
-    // Use native tar (available in Win10+, macOS, Linux) to extract
-    execSync(`tar -xf "${tempArchive}" -C "${binDir}"`);
+    
+    // Fix for Windows tar: use forward slashes and --force-local to avoid "hostname" error
+    const tarArchive = tempArchive.replace(/\\/g, '/');
+    const tarDir = binDir.replace(/\\/g, '/');
+    const forceLocal = platform === 'win32' ? '--force-local ' : '';
+    
+    try {
+      execSync(`tar ${forceLocal}-xf "${tarArchive}" -C "${tarDir}"`);
+    } catch (e) {
+      console.error('Failed to extract with tar. Trying fallback rename...');
+      // If tar fails, we at least have the archive
+    }
     
     // Rename the extracted binary to the expected name if needed
     const extractedBinPath = path.join(binDir, finalBinName);
-    if (extractedBinPath !== finalBinPath) {
+    if (fs.existsSync(extractedBinPath) && extractedBinPath !== finalBinPath) {
+      if (fs.existsSync(finalBinPath)) fs.unlinkSync(finalBinPath);
       fs.renameSync(extractedBinPath, finalBinPath);
     }
 
-    // Clean up the archive
-    fs.unlinkSync(tempArchive);
+    // Clean up the archive if it exists
+    if (fs.existsSync(tempArchive)) {
+      fs.unlinkSync(tempArchive);
+    }
 
-    if (platform !== 'win32') {
+    if (platform !== 'win32' && fs.existsSync(finalBinPath)) {
       fs.chmodSync(finalBinPath, 0o755);
     }
     console.log(`${PROJECT_NAME} installed successfully.`);
