@@ -8,7 +8,6 @@ const { execSync } = require('child_process');
 
 const PROJECT_NAME = 'shenvy';
 const REPO = 'Shenvy/shenvy-cli-dist';
-// Dynamically use the version from package.json
 const VERSION = require('../package.json').version; 
 
 const platform = os.platform();
@@ -30,7 +29,7 @@ if (!archiveName) {
   process.exit(1);
 }
 
-const url = `https://github.com/${REPO}/releases/download/v${VERSION}/${PROJECT_NAME}_${archiveName}`;
+const url = `https://github.com/${REPO}/releases/download/v${VERSION}/shenvy_${archiveName}`;
 const binDir = path.join(__dirname);
 const tempArchive = path.join(binDir, archiveName);
 const finalBinName = platform === 'win32' ? 'shenvy.exe' : 'shenvy';
@@ -50,10 +49,8 @@ function download(url, dest) {
         return;
       }
       response.pipe(file);
-      file.on('finish', () => {
-        file.close();
-        resolve();
-      });
+      // Wait for 'close' instead of 'finish' to ensure OS handle is released
+      file.on('close', resolve);
     }).on('error', (err) => {
       fs.unlink(dest, () => {});
       reject(err);
@@ -61,20 +58,21 @@ function download(url, dest) {
   });
 }
 
-download(url, tempArchive)
-  .then(() => {
-    console.log('Extracting archive...');
+async function install() {
+  try {
+    if (fs.existsSync(tempArchive)) fs.unlinkSync(tempArchive);
     
-    try {
-      if (platform === 'win32') {
-        const psCommand = `powershell.exe -NoProfile -Command "Expand-Archive -Path '${tempArchive}' -DestinationPath '${binDir}' -Force"`;
-        execSync(psCommand);
-      } else {
-        execSync(`tar -xzf "${tempArchive}" -C "${binDir}"`);
-      }
-    } catch (e) {
-      console.error('Extraction failed:', e.message);
-      process.exit(1);
+    await download(url, tempArchive);
+    
+    // Small delay to let the OS settle
+    await new Promise(r => setTimeout(r, 500));
+
+    console.log('Extracting archive...');
+    if (platform === 'win32') {
+      const psCommand = `powershell.exe -NoProfile -Command "Expand-Archive -Path '${tempArchive.replace(/'/g, "''")}' -DestinationPath '${binDir.replace(/'/g, "''")}' -Force"`;
+      execSync(psCommand);
+    } else {
+      execSync(`tar -xzf "${tempArchive}" -C "${binDir}"`);
     }
     
     const extractedBinPath = path.join(binDir, finalBinName);
@@ -84,16 +82,17 @@ download(url, tempArchive)
           fs.renameSync(extractedBinPath, finalBinPath);
         }
     } else {
-      console.error(`Error: Extracted binary ${finalBinName} not found`);
-      process.exit(1);
+      throw new Error(`Extracted binary ${finalBinName} not found`);
     }
 
     if (fs.existsSync(tempArchive)) fs.unlinkSync(tempArchive);
     if (platform !== 'win32' && fs.existsSync(finalBinPath)) fs.chmodSync(finalBinPath, 0o755);
     
     console.log(`${PROJECT_NAME} v${VERSION} installed successfully.`);
-  })
-  .catch((err) => {
+  } catch (err) {
     console.error(`Error installing ${PROJECT_NAME}:`, err.message);
     process.exit(1);
-  });
+  }
+}
+
+install();
