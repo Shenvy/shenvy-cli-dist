@@ -2,13 +2,13 @@
 basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
 
 case `uname` in
-    *CYGWIN*|*MINGW*|*MSYS*) exe_ext=.exe ;;
-    *) exe_ext= ;;
+    *CYGWIN*|*MINGW*|*MSYS*) bin_name="shenvy.exe" ;;
+    *) bin_name="shenvy-bin" ;;
 esac
 
-if [ -x "$basedir/shenvy-bin" ]; then
-  "$basedir/shenvy-bin" "$@"
+if [ -x "$basedir/$bin_name" ]; then
+  "$basedir/$bin_name" "$@"
 else
   # Fallback if binary is not yet downloaded
-  node "$basedir/install.js" && "$basedir/shenvy-bin" "$@"
+  node "$basedir/install.js" && "$basedir/$bin_name" "$@"
 fi
