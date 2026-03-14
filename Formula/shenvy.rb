@@ -9,16 +9,16 @@ class Shenvy < Formula
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.0/shenvy-cli-dist_darwin_amd64.tar.gz"
-      sha256 "3f486c04513381da912c86c47f1be452467503d9cf01388b6a2649f6d3481776"
+      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.0/shenvy_darwin_amd64.tar.gz"
+      sha256 "bf74583e91bdd8fd53d943931cbf8aa6e5b643b7f4bcfec5025a830b07648e76"
 
       define_method(:install) do
         bin.install "shenvy"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.0/shenvy-cli-dist_darwin_arm64.tar.gz"
-      sha256 "27a98935ba995bc06ae2e79511c1f9d84651b5b747affbbbfa83a8df27644f88"
+      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.0/shenvy_darwin_arm64.tar.gz"
+      sha256 "924c4bb5a674b6b3f60735145a0c639649ae1ff82f435a3204e06a7ae8ade24e"
 
       define_method(:install) do
         bin.install "shenvy"
@@ -28,15 +28,15 @@ class Shenvy < Formula
 
   on_linux do
     if Hardware::CPU.intel? && Hardware::CPU.is_64_bit?
-      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.0/shenvy-cli-dist_linux_amd64.tar.gz"
-      sha256 "fbe4afa3d3c854a8d3c5b8a6cda9c5111640be8363aa8f1980e97d40d1a5e8c7"
+      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.0/shenvy_linux_amd64.tar.gz"
+      sha256 "53412ca19a768daddb73adcd33b40d633bcde3bb471acee087ce2e7b379216a0"
       define_method(:install) do
         bin.install "shenvy"
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.0/shenvy-cli-dist_linux_arm64.tar.gz"
-      sha256 "59161ee5b83b34f2f2dc843e5bb5a33484043fed293e8590756243c8b0c35fdc"
+      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.0/shenvy_linux_arm64.tar.gz"
+      sha256 "9639b4b572f9cea8c3d4fa27ac97c52407ea6bb4a8108fb3e4eb2c445bd641f8"
       define_method(:install) do
         bin.install "shenvy"
       end
