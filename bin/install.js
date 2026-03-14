@@ -64,26 +64,33 @@ download(url, tempArchive)
   .then(() => {
     console.log('Extracting archive...');
     
-    // Fix for Windows tar: use forward slashes and --force-local to avoid "hostname" error
-    const tarArchive = tempArchive.replace(/\\/g, '/');
-    const tarDir = binDir.replace(/\\/g, '/');
-    const forceLocal = platform === 'win32' ? '--force-local ' : '';
-    
     try {
-      execSync(`tar ${forceLocal}-xf "${tarArchive}" -C "${tarDir}"`);
+      if (platform === 'win32') {
+        // Use PowerShell for ZIP files on Windows
+        const psCommand = `powershell.exe -NoProfile -Command "Expand-Archive -Path '${tempArchive}' -DestinationPath '${binDir}' -Force"`;
+        execSync(psCommand);
+      } else {
+        // Use tar for .tar.gz on Unix-like systems
+        execSync(`tar -xzf "${tempArchive}" -C "${binDir}"`);
+      }
     } catch (e) {
-      console.error('Failed to extract with tar. Trying fallback rename...');
-      // If tar fails, we at least have the archive
+      console.error('Extraction failed:', e.message);
+      process.exit(1);
     }
     
-    // Rename the extracted binary to the expected name if needed
+    // Rename the extracted binary to the expected name if needed (e.g., shenvy -> shenvy-bin)
     const extractedBinPath = path.join(binDir, finalBinName);
-    if (fs.existsSync(extractedBinPath) && extractedBinPath !== finalBinPath) {
-      if (fs.existsSync(finalBinPath)) fs.unlinkSync(finalBinPath);
-      fs.renameSync(extractedBinPath, finalBinPath);
+    if (fs.existsSync(extractedBinPath)) {
+        if (platform !== 'win32' && extractedBinPath !== finalBinPath) {
+          if (fs.existsSync(finalBinPath)) fs.unlinkSync(finalBinPath);
+          fs.renameSync(extractedBinPath, finalBinPath);
+        }
+    } else {
+      console.error(`Error: Extracted binary ${finalBinName} not found in ${binDir}`);
+      process.exit(1);
     }
 
-    // Clean up the archive if it exists
+    // Clean up the archive
     if (fs.existsSync(tempArchive)) {
       fs.unlinkSync(tempArchive);
     }
