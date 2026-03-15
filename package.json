@@ -4,8 +4,7 @@
   "description": "Securely manage environment variables with E2EE (Go implementation wrapper)",
   "main": "bin/install.js",
   "bin": {
-    "shenvy": "bin/shenvy",
-    "shenvy-win": "bin/shenvy.cmd"
+    "shenvy": "bin/shenvy"
   },
   "scripts": {
     "postinstall": "node bin/install.js"

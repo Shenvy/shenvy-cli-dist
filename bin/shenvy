@@ -1,14 +1,31 @@
-#!/bin/sh
-basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+#!/usr/bin/env node
+'use strict';
 
-case `uname` in
-    *CYGWIN*|*MINGW*|*MSYS*) bin_name="shenvy.exe" ;;
-    *) bin_name="shenvy-bin" ;;
-esac
+const { spawn } = require('child_process');
+const path = require('path');
+const os = require('os');
 
-if [ -x "$basedir/$bin_name" ]; then
-  "$basedir/$bin_name" "$@"
-else
-  # Fallback if binary is not yet downloaded
-  node "$basedir/install.js" && "$basedir/$bin_name" "$@"
-fi
+const isWin = os.platform() === 'win32';
+const binName = isWin ? 'shenvy.exe' : 'shenvy-bin';
+const binPath = path.join(__dirname, binName);
+
+const child = spawn(binPath, process.argv.slice(2), {
+  stdio: 'inherit',
+  windowsHide: true,
+});
+
+child.on('error', (err) => {
+  if (err.code === 'ENOENT') {
+    console.error(
+      `[shenvy] Binary not found at ${binPath}.\n` +
+      `Run: node ${path.join(__dirname, 'install.js')}`
+    );
+  } else {
+    console.error(`[shenvy] Failed to start binary: ${err.message}`);
+  }
+  process.exit(1);
+});
+
+child.on('close', (code) => {
+  process.exit(code ?? 0);
+});
