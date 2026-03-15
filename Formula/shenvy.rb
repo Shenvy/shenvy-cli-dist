@@ -5,20 +5,20 @@
 class Shenvy < Formula
   desc "Securely manage environment variables with E2EE."
   homepage "https://shenvy.net"
-  version "0.1.12"
+  version "0.1.13"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.12/shenvy_darwin_amd64.tar.gz"
-      sha256 "c1272948d9b22df896504c4f3a0bdbc936560d3e8fa1af95815ec6876d420654"
+      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.13/shenvy_darwin_amd64.tar.gz"
+      sha256 "4e026d2897b5213dd38f90fe09fcf3104b68aafd9ab0239d4f66575db8e41d10"
 
       define_method(:install) do
         bin.install "shenvy"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.12/shenvy_darwin_arm64.tar.gz"
-      sha256 "37619d45ccbcd2a00f54598553ab319c8ad471cd76c7a8d8fdc95616f69838a2"
+      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.13/shenvy_darwin_arm64.tar.gz"
+      sha256 "c5fccfee427d3936d0d3b750cd6a94cfa846169a7121a2b11ad2023e050e9230"
 
       define_method(:install) do
         bin.install "shenvy"
@@ -28,15 +28,15 @@ class Shenvy < Formula
 
   on_linux do
     if Hardware::CPU.intel? && Hardware::CPU.is_64_bit?
-      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.12/shenvy_linux_amd64.tar.gz"
-      sha256 "ec631c3bc90630bd1a563e73de3f16f46c273b7a9257f04b637bac1b36650ce3"
+      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.13/shenvy_linux_amd64.tar.gz"
+      sha256 "e673bbb48cefe2c3ee50f471849f237e6076a0a9b87febab0cccb3f43a7bcdfe"
       define_method(:install) do
         bin.install "shenvy"
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.12/shenvy_linux_arm64.tar.gz"
-      sha256 "4b459760efd16cc4b0a3d01078b1d8d0578c08829d35ca3c77cf6332005366bc"
+      url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.13/shenvy_linux_arm64.tar.gz"
+      sha256 "ab435eaa96513ab1252dbaee3498594a1430839619551163545fd41287ef45a9"
       define_method(:install) do
         bin.install "shenvy"
       end
