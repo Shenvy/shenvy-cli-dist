@@ -10,7 +10,7 @@ class Shenvy < Formula
   on_macos do
     if Hardware::CPU.intel?
       url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.15/shenvy_darwin_amd64.tar.gz"
-      sha256 "748a65bcf706b93140b82d0e8d7d38917bceffa982201e0ec6e0227b388bce63"
+      sha256 "db63b05d0a0c16e1e4a85f99c055538c47c247a569ec8111b9ac34b3f748bfca"
 
       define_method(:install) do
         bin.install "shenvy"
@@ -18,7 +18,7 @@ class Shenvy < Formula
     end
     if Hardware::CPU.arm?
       url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.15/shenvy_darwin_arm64.tar.gz"
-      sha256 "ec48471fff0211dd3e5aee615ea66f10c036b26bec3eff2fe3ecf863105e89cd"
+      sha256 "732e948f0b8fdd0226a216fd2edbf62ce50533c412a72f50a367c2d84fb484e1"
 
       define_method(:install) do
         bin.install "shenvy"
@@ -29,14 +29,14 @@ class Shenvy < Formula
   on_linux do
     if Hardware::CPU.intel? && Hardware::CPU.is_64_bit?
       url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.15/shenvy_linux_amd64.tar.gz"
-      sha256 "7d9f5ce10c7011e7b8cffb189b67670896b2ddf67afd69fc41fc4e4ab1efe995"
+      sha256 "f8dcde2a8df02df9dcbe33899ead2a5341380abbfd7e62f735cc3d946198a28d"
       define_method(:install) do
         bin.install "shenvy"
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
       url "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.15/shenvy_linux_arm64.tar.gz"
-      sha256 "0138839cb00099e48ef5ec795f04fa922d07cd0ae2799f39a0070cbccf55f6fc"
+      sha256 "b1557d0e77be17c4ed868c3ce9880d275d70adb712b2f94d5d310a8960ff4e1f"
       define_method(:install) do
         bin.install "shenvy"
       end
