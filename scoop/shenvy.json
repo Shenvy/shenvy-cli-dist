@@ -6,14 +6,14 @@
             "bin": [
                 "shenvy.exe"
             ],
-            "hash": "c4555a0bbbcd81df1776e2c7169431069ce759139517f1c8f61adc280dd16b0f"
+            "hash": "9d238e14f8d4cfdc028e09d298b51de443b5869fa2cbc3d92a931a5523966441"
         },
         "arm64": {
             "url": "https://github.com/Shenvy/shenvy-cli-dist/releases/download/v0.1.15/shenvy_windows_arm64.zip",
             "bin": [
                 "shenvy.exe"
             ],
-            "hash": "2567361f88a539e4a5a4d8ecc9744652b7e927c8c5c186fa2e631cd1b4ba3736"
+            "hash": "97acfcc91782e6d8fa05f9581df6de2f12b7a527f6355fabd13fba736e4d117a"
         }
     },
     "homepage": "https://shenvy.net",
