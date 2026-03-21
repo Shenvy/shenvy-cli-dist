@@ -1,6 +1,6 @@
 {
   "name": "@shenvy/cli",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Securely manage environment variables with E2EE (Go implementation wrapper)",
   "main": "bin/install.js",
   "bin": {
